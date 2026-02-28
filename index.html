@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>한국어 발음 학습 - 제01과</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 2rem 1.5rem;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .header p { font-size: 1.1rem; opacity: 0.9; }
+        .week-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.25);
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 1.1rem;
+            margin-top: 0.75rem;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+            background: #fafafa;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 1.0rem 0.3rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #9ca3af;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab-btn:hover { color: #f59e0b; }
+        .tab-btn.active { color: #d97706; border-bottom-color: #f59e0b; }
+        .content { padding: 1.25rem; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .section-title { font-size: 1.55rem; font-weight: 700; color: #1f2937; margin-bottom: 1rem; }
+
+        /* 카드 */
+        .card {
+            background: #fffbeb;
+            padding: 1.3rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.9rem;
+            border-left: 4px solid #f59e0b;
+        }
+        .card-kr { font-size: 1.55rem; font-weight: 700; color: #1f2937; margin-bottom: 0.35rem; }
+        .card-mean { font-size: 1.15rem; color: #6b7280; margin-bottom: 0.2rem; }
+        .card-ruby { font-size: 1.1rem; color: #d97706; font-weight: 600; margin-bottom: 0.45rem; }
+        .card-tip { font-size: 1.1rem; color: #4b5563; font-style: italic; margin-bottom: 0.7rem; }
+
+        /* 버튼 */
+        .btn-row { display: flex; gap: 0.5rem; }
+        .btn-listen {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white; padding: 0.55rem 0.9rem;
+            border: none; border-radius: 0.5rem;
+            cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; gap: 0.4rem;
+            transition: all 0.2s; font-size: 1.1rem;
+        }
+        .btn-listen:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-mic {
+            flex: 1;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; padding: 0.55rem 0.9rem;
+            border: none; border-radius: 0.5rem;
+            cursor: pointer; font-weight: 600;
+            display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+            transition: all 0.2s; font-size: 1.1rem;
+        }
+        .btn-mic:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-mic.recording {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: pulse-btn 1s infinite;
+        }
+        @keyframes pulse-btn {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
+        }
+
+        /* 결과 */
+        .result-box {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; padding: 1rem; border-radius: 0.75rem;
+            text-align: center; margin-top: 0.7rem;
+        }
+        .result-score { font-size: 2.2rem; font-weight: 900; }
+        .result-msg { font-size: 1.15rem; margin-top: 0.3rem; }
+        .result-recognized {
+            background: rgba(255,255,255,0.2);
+            padding: 0.4rem 0.6rem; border-radius: 0.4rem;
+            margin-top: 0.6rem; font-size: 1.1rem;
+        }
+        .hidden { display: none !important; }
+
+        /* 문법 */
+        .grammar-card {
+            background: #fffbeb; border-left: 4px solid #f59e0b;
+            padding: 1.3rem; border-radius: 0.75rem; margin-bottom: 1.1rem;
+        }
+        .grammar-title { font-size: 1.15rem; font-weight: 700; color: #1f2937; margin-bottom: 0.6rem; }
+        .grammar-desc { color: #374151; line-height: 1.8; margin-bottom: 0.9rem; font-size: 1.15rem; }
+        .btn-explain {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white; padding: 0.5rem 1rem;
+            border: none; border-radius: 0.5rem;
+            cursor: pointer; font-weight: 600; font-size: 1.1rem;
+            margin-bottom: 0.75rem; transition: all 0.2s;
+        }
+        .btn-explain:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-explain.speaking { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .grammar-ex {
+            background: white; padding: 0.7rem; border-radius: 0.5rem;
+            margin-bottom: 0.5rem; border-left: 3px solid #10b981;
+        }
+        .grammar-ex-kr { font-weight: 600; color: #1f2937; margin-bottom: 0.2rem; font-size: 1.1rem; }
+        .grammar-ex-mean { color: #6b7280; font-size: 1.1rem; }
+
+        /* 한류 */
+        .news-card {
+            background: #fef3c7; border-left: 4px solid #f59e0b;
+            padding: 1.3rem; border-radius: 0.75rem; margin-bottom: 1.1rem;
+        }
+        .news-title { font-size: 1rem; font-weight: 700; color: #1f2937; margin-bottom: 0.45rem; }
+        .news-body { color: #374151; line-height: 1.8; font-size: 1.1rem; margin-bottom: 0.7rem; }
+        .news-learn {
+            background: #dcfce7; padding: 0.7rem; border-radius: 0.5rem;
+            border-left: 3px solid #10b981;
+        }
+        .news-learn-title { font-weight: 700; color: #065f46; margin-bottom: 0.25rem; font-size: 1.1rem; }
+        .news-learn-body { color: #047857; font-size: 1.1rem; line-height: 1.7; }
+
+        /* 발음 안내 */
+        .pron-box {
+            background: #fef3c7; border: 2px dashed #f59e0b;
+            padding: 0.9rem; border-radius: 0.75rem; margin-bottom: 1rem;
+            font-size: 1.1rem; color: #92400e; line-height: 1.8;
+        }
+        .pron-box strong { color: #78350f; }
+
+        .notice {
+            background: #fef3c7; border: 2px solid #fcd34d;
+            padding: 0.9rem; border-radius: 0.75rem;
+            font-size: 1.1rem; color: #92400e; line-height: 1.7;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🎤 한국어 발음 학습</h1>
+        <p>韓国語発音練習アプリ</p>
+        <div class="week-badge">📅 第01課 — 안녕하세요? 만나서 반가워요.</div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="words">📱 単語</button>
+        <button class="tab-btn" data-tab="sentences">📝 会話</button>
+        <button class="tab-btn" data-tab="grammar">📚 文法</button>
+        <button class="tab-btn" data-tab="hallyu">⭐ 韓流</button>
+    </div>
+
+    <div class="content">
+
+        <!-- ════════ 단어 ════════ -->
+        <div id="words" class="tab-panel active">
+            <div class="section-title">📱 新出単語</div>
+
+            <div class="pron-box">
+                <strong>💡 連音（リョンウム）とは？</strong><br>
+                パッチムのある文字の後に母音が続く場合、パッチムの子音は次の音節と一緒に発音される。<br>
+                例）이름이 → <strong>[이르미]</strong>　사람이에요 → <strong>[사라미에요]</strong>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">안녕하세요?</div>
+                <div class="card-mean">뜻: おはようございます／こんにちは／こんばんは</div>
+                <div class="card-ruby">読み: アンニョンハセヨ</div>
+                <div class="card-tip">💡 時間帯に関わらず使える万能あいさつ！</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('안녕하세요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'안녕하세요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">만나서 반가워요.</div>
+                <div class="card-mean">뜻: お会いできてうれしいです。</div>
+                <div class="card-ruby">読み: マンナソ バンガウォヨ</div>
+                <div class="card-tip">💡 반갑다(うれしい)の丁寧な活用形</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('만나서 반가워요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'만나서반가워요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">이름이 뭐예요?</div>
+                <div class="card-mean">뜻: お名前は何ですか？</div>
+                <div class="card-ruby">読み: イルミ ムォエヨ　※連音！이름이→[이르미]</div>
+                <div class="card-tip">💡 이름+이 → 연음으로 [이르미]!</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('이름이 뭐예요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'이름이뭐예요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">처음 뵙겠습니다.</div>
+                <div class="card-mean">뜻: はじめまして。</div>
+                <div class="card-ruby">読み: チョウム ペプケッスムニダ</div>
+                <div class="card-tip">💡 공식 인사에 사용. フォーマルな初対面に！</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('처음 뵙겠습니다')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'처음뵙겠습니다')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">학생 / 회사원 / 의사</div>
+                <div class="card-mean">뜻: 学生 / 会社員 / 医者</div>
+                <div class="card-ruby">読み: ハクセン / フェサウォン / ウィサ</div>
+                <div class="card-tip">💡 직업(職業) 단어를 외워 두세요!</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('학생, 회사원, 의사')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'학생회사원의사')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">안녕히 계세요.</div>
+                <div class="card-mean">뜻: さようなら。（その場に残る人へ）</div>
+                <div class="card-ruby">読み: アンニョンヒ ゲセヨ</div>
+                <div class="card-tip">💡 떠나는 사람은 "안녕히 가세요"！</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('안녕히 계세요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'안녕히계세요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+        </div>
+
+        <!-- ════════ 문장 ════════ -->
+        <div id="sentences" class="tab-panel">
+            <div class="section-title">📝 会話</div>
+
+            <div class="card">
+                <div class="card-kr">제 이름은 김영희예요.</div>
+                <div class="card-mean">뜻: 私の名前はキム・ヨンヒです。</div>
+                <div class="card-tip">💡 이름 끝에 받침 없으면 → -예요</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('제 이름은 김영희예요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'제이름은김영희예요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">저는 히로 다다시예요.</div>
+                <div class="card-mean">뜻: 私は廣忠です。</div>
+                <div class="card-tip">💡 저는 = 私は（謙譲語）</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('저는 히로 다다시예요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'저는히로다다시예요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">일본 사람이에요?</div>
+                <div class="card-mean">뜻: 日本人ですか？</div>
+                <div class="card-tip">💡 사람이에요 → 連音：[사라미에요]</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('일본 사람이에요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'일본사람이에요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">아니요. 저는 회사원이에요.</div>
+                <div class="card-mean">뜻: いいえ。私は会社員です。</div>
+                <div class="card-tip">💡 받침 있으면 → -이에요　(회사원+이에요)</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('아니요. 저는 회사원이에요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'아니요저는회사원이에요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">히로 씨도 학생이에요?</div>
+                <div class="card-mean">뜻: 廣さんも学生ですか？</div>
+                <div class="card-tip">💡 -도 = 〜も　同じ質問をする時に使う</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('히로 씨도 학생이에요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'히로씨도학생이에요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-kr">어느 나라 사람이에요?</div>
+                <div class="card-mean">뜻: どこの国の人ですか？</div>
+                <div class="card-tip">💡 어느=どの　나라=国　회화에서 자주 나옵니다!</div>
+                <div class="btn-row">
+                    <button class="btn-listen" onclick="speak('어느 나라 사람이에요')">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this,'어느나라사람이에요')">🎤 録音</button>
+                </div>
+                <div class="result-box hidden"></div>
+            </div>
+        </div>
+
+        <!-- ════════ 문법 ════════ -->
+        <div id="grammar" class="tab-panel">
+            <div class="section-title">📚 第01課 重要文型</div>
+
+            <div class="grammar-card">
+                <div class="grammar-title">文型1　제 이름은 -예요 / -이에요</div>
+                <button class="btn-explain" onclick="explain(this, '文型1の説明です。イダは名詞と結合して、主語と述語が同じであることを意味します。直前の名詞の語末にパッチムがある場合はイエヨ、パッチムがない場合はイェヨを使います。例えば、ハクセン、つまり学生にはパッチムがあるので、저는 학생이에요、私は学生です、となります。ヨンヒという名前にはパッチムがないので、제 이름은 김영희예요、私の名前はキムヨンヒです、となります。')">🔊 説明を聞く</button>
+                <div class="grammar-desc">
+                    -이다は名詞と結合して、主語と述語が同じであることを意味する。<br>
+                    直前の名詞の語末に<strong>パッチムあり → -이에요</strong><br>
+                    直前の名詞の語末に<strong>パッチムなし → -예요</strong>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">제 이름은 김영희<strong>예요</strong>. （영희 → 받침 없음）</div>
+                    <div class="grammar-ex-mean">→ 私の名前はキム・ヨンヒです。</div>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">저는 학생<strong>이에요</strong>. （학생 → 받침 ㅇ）</div>
+                    <div class="grammar-ex-mean">→ 私は学生です。</div>
+                </div>
+            </div>
+
+            <div class="grammar-card">
+                <div class="grammar-title">文型2　저는 / 은·는 (주제 조사)</div>
+                <button class="btn-explain" onclick="explain(this, '文型2の説明です。저は1人称の謙譲語で、日本語の私、わたくし、に相当します。ウン・ヌンは日本語のハのような主題を表す副助詞です。直前の名詞の語末にパッチムがある場合はウン、パッチムがない場合はヌンを使います。例えば、저는 회사원이에요、私は会社員です。이름은 뭐예요、お名前は何ですか。このように使い分けます。')">🔊 説明を聞く</button>
+                <div class="grammar-desc">
+                    저は1人称の謙譲語。日本語の「私（わたくし）」に相当する。<br>
+                    -은/는は日本語の「-は」のような主題を表す副助詞。<br>
+                    <strong>パッチムあり → -은</strong>　<strong>パッチムなし → -는</strong>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">저<strong>는</strong> 회사원이에요. （저 → 받침 없음 → 는）</div>
+                    <div class="grammar-ex-mean">→ 私は会社員です。</div>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">이름<strong>은</strong> 뭐예요? （이름 → 받침 ㅁ → 은）</div>
+                    <div class="grammar-ex-mean">→ お名前は何ですか？</div>
+                </div>
+            </div>
+
+            <div class="grammar-card">
+                <div class="grammar-title">文型3　-사람이에요? / -사람이 아니에요</div>
+                <button class="btn-explain" onclick="explain(this, '文型3の説明です。国籍を聞いたり答えたりする表現です。질문할 때는 문장 끝을 올려서 발음します。否定する場合は、イ・ガ アニエヨという表現を使います。例えば、한국 사람이에요、韓国人ですか、と聞かれて、違う場合は、아니요、일본 사람이 아니에요、いいえ、日本人ではありません、と答えます。')">🔊 説明を聞く</button>
+                <div class="grammar-desc">
+                    国籍を聞く・答える表現。否定は<strong>-이/가 아니에요</strong>を使う。
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">가: 한국 사람이에요?</div>
+                    <div class="grammar-ex-mean">→ 韓国人ですか？</div>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">나: 아니요. 일본 사람<strong>이 아니에요</strong>.</div>
+                    <div class="grammar-ex-mean">→ いいえ。日本人ではありません。</div>
+                </div>
+            </div>
+
+            <div class="grammar-card">
+                <div class="grammar-title">文型4　-도 （〜も）</div>
+                <button class="btn-explain" onclick="explain(this, '文型4の説明です。ドは日本語のモ、という意味を表します。すでに出た話題と同じ内容について話す時に使います。主格助詞のイ・ガや主題を表す副助詞のウン・ヌンの代わりにドを使います。例えば、히로 씨도 학생이에요、廣さんも学生ですか。네、저도 학생이에요、はい、私も学生です。このように使います。')">🔊 説明を聞く</button>
+                <div class="grammar-desc">
+                    -도は「〜も」を意味する。同じ質問をする場面で、主格助詞-이/가や主題を表す副助詞-은/는の代わりに使われる。
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">히로 씨<strong>도</strong> 학생이에요?</div>
+                    <div class="grammar-ex-mean">→ 廣さん<strong>も</strong>学生ですか？</div>
+                </div>
+                <div class="grammar-ex">
+                    <div class="grammar-ex-kr">네. 저<strong>도</strong> 학생이에요.</div>
+                    <div class="grammar-ex-mean">→ はい。私<strong>も</strong>学生です。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════════ 한류 ════════ -->
+        <div id="hallyu" class="tab-panel">
+            <div class="section-title">⭐ 韓流情報</div>
+
+            <div class="news-card">
+                <div class="news-title">🎬 드라마: 나의 아저씨 (My Mister)</div>
+                <div class="news-body">
+                    一人で重荷を背負って生きる中年男性と、生きることに疲れた若い女性が互いを癒していく深い人間ドラマ。日常の韓国語とあいさつ表現が自然に学べます。
+                </div>
+                <div class="news-learn">
+                    <div class="news-learn-title">📚 학습 포인트</div>
+                    <div class="news-learn-body">
+                        안녕하세요（こんにちは）、감사합니다（ありがとう）など今回学んだあいさつが頻繁に登場します。職業や自己紹介の表現も確認できます。
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <div class="news-title">🎵 노래: IU - 좋은 날 (Good Day)</div>
+                <div class="news-body">
+                    韓国を代表する国民的シンガーIUの代表曲。明るくテンポよい歌詞で、日常の韓国語表現が自然に耳に入ってきます。
+                </div>
+                <div class="news-learn">
+                    <div class="news-learn-title">📚 학습 포인트</div>
+                    <div class="news-learn-body">
+                        「나는」（私は）「좋아」（好き・いい）など-은/는 조사와 기본 형용사 표현을 노래로 익힐 수 있습니다。
+                    </div>
+                </div>
+            </div>
+
+            <div class="news-card">
+                <div class="news-title">🍽️ 한국 음식: 비빔밥 (ビビンバ)</div>
+                <div class="news-body">
+                    ご飯の上に各種ナムル、牛肉、卵、コチュジャンをのせて混ぜて食べる韓国の代表料理。식당（食堂）で注文する韓国語も覚えましょう！
+                </div>
+                <div class="news-learn">
+                    <div class="news-learn-title">📚 학습 포인트</div>
+                    <div class="news-learn-body">
+                        「비빔밥 하나 주세요」（ビビンバ一つください）<br>
+                        「맛있어요!」（おいしいです！）<br>
+                        「얼마예요?」（いくらですか？）
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notice">
+            <strong>💡 使い方</strong><br>
+            1. ▶ <strong>聞く</strong> → 正しい発音を聞く<br>
+            2. 🎤 <strong>録音</strong> → 5秒間まねして話す<br>
+            3. 自動採点されます！<br><br>
+            <strong>⚠️ 注意:</strong> 録音機能はGitHub PagesまたはHTTPSで開いてください。ファイルを直接開くと録音が動作しません。
+        </div>
+    </div>
+</div>
+
+<script>
+// ─── 문법 설명 TTS (일본어) ───
+function explain(btn, text) {
+    speechSynthesis.cancel();
+    if (btn.classList.contains('speaking')) {
+        btn.classList.remove('speaking');
+        btn.innerHTML = '🔊 説明を聞く';
+        return;
+    }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ja-JP';
+    u.rate = 0.9;
+    btn.classList.add('speaking');
+    btn.innerHTML = '⏹ 停止';
+    u.onend = () => {
+        btn.classList.remove('speaking');
+        btn.innerHTML = '🔊 説明を聞く';
+    };
+    speechSynthesis.speak(u);
+}
+
+// ─── TTS ───
+function speak(text) {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ko-KR';
+    u.rate = 0.7;
+    speechSynthesis.speak(u);
+}
+
+// ─── 음성인식 ───
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+function record(btn, answer) {
+    if (!SR) { alert('このブラウザは音声認識に対応していません。\nChromeを使ってください。'); return; }
+    const card = btn.closest('.card');
+    const resultBox = card.querySelector('.result-box');
+    resultBox.classList.add('hidden');
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(stream => {
+        btn.classList.add('recording');
+        btn.innerHTML = '⏹ 録音中...';
+        const recognition = new SR();
+        recognition.lang = 'ko-KR';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onresult = (e) => {
+            const heard = e.results[0][0].transcript;
+            stream.getTracks().forEach(t => t.stop());
+            btn.classList.remove('recording');
+            btn.innerHTML = '🎤 録音';
+            showScore(card, answer, heard);
+        };
+        recognition.onerror = () => {
+            stream.getTracks().forEach(t => t.stop());
+            btn.classList.remove('recording');
+            btn.innerHTML = '🎤 録音';
+            resultBox.innerHTML = '<div class="result-msg">❌ 認識失敗。もう一度試してください。</div>';
+            resultBox.classList.remove('hidden');
+        };
+        recognition.onend = () => {
+            stream.getTracks().forEach(t => t.stop());
+            btn.classList.remove('recording');
+            btn.innerHTML = '🎤 録音';
+        };
+        recognition.start();
+        setTimeout(() => { try { recognition.stop(); } catch(e) {} }, 5000);
+    })
+    .catch(() => {
+        alert('❌ マイクへのアクセスに失敗しました。\nGitHub PagesまたはHTTPS環境で開いてください。');
+    });
+}
+
+function showScore(card, answer, heard) {
+    const norm = s => s.replace(/[\s.。，,!！?？]/g, '');
+    const a = norm(answer);
+    const b = norm(heard);
+    const pct = Math.max(0, Math.round(similarity(a, b) * 100));
+    let emoji, msg;
+    if (pct === 100)    { emoji = '🎉'; msg = '完璧です！'; }
+    else if (pct >= 85) { emoji = '⭐'; msg = 'とても上手！'; }
+    else if (pct >= 70) { emoji = '👍'; msg = 'いい感じ！'; }
+    else if (pct >= 50) { emoji = '💪'; msg = 'もう一度！'; }
+    else                { emoji = '🔄'; msg = '最初から挑戦！'; }
+
+    const box = card.querySelector('.result-box');
+    box.innerHTML =
+        `<div class="result-score">${pct}点</div>` +
+        `<div class="result-msg">${emoji} ${msg}</div>` +
+        `<div class="result-recognized">認識結果: "${heard}"</div>`;
+    box.classList.remove('hidden');
+}
+
+function similarity(s1, s2) {
+    const longer = s1.length >= s2.length ? s1 : s2;
+    const shorter = s1.length >= s2.length ? s2 : s1;
+    if (!longer.length) return 1;
+    return (longer.length - editDist(longer, shorter)) / longer.length;
+}
+
+function editDist(a, b) {
+    const m = a.length, n = b.length;
+    const dp = Array.from({length: m+1}, () => Array(n+1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+    for (let i = 1; i <= m; i++)
+        for (let j = 1; j <= n; j++)
+            dp[i][j] = a[i-1] === b[j-1]
+                ? dp[i-1][j-1]
+                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
+    return dp[m][n];
+}
+
+// ─── 탭 전환 ───
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(btn.dataset.tab).classList.add('active');
+        btn.classList.add('active');
+    });
+});
+</script>
+</body>
+</html>
