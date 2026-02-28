@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>테스트</title>
+<style>
+body { font-family: sans-serif; padding: 2rem; font-size: 1.2rem; }
+button { display: block; width: 100%; padding: 1.5rem; margin: 1rem 0;
+  font-size: 1.3rem; border: none; border-radius: 1rem; cursor: pointer; }
+.t1 { background: #10b981; color: white; }
+.t2 { background: #3b82f6; color: white; }
+.t3 { background: #f59e0b; color: white; }
+#log { background: #f3f4f6; padding: 1rem; border-radius: 0.5rem;
+  min-height: 100px; font-size: 1rem; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h2>🔧 발음 앱 테스트</h2>
+
+<button class="t1" onclick="testTTS()">① TTS 테스트 (안녕하세요)</button>
+<button class="t2" onclick="testVoices()">② 음성 목록 확인</button>
+<button class="t3" id="recBtn" onclick="testRec()">③ 녹음 테스트</button>
+
+<div id="log">결과가 여기 표시됩니다...</div>
+
+<script>
+const log = (msg) => {
+    document.getElementById('log').textContent += '\n' + msg;
+};
+
+// ① TTS 테스트
+function testTTS() {
+    log('TTS 시작...');
+    try {
+        speechSynthesis.cancel();
+        setTimeout(() => {
+            const u = new SpeechSynthesisUtterance('안녕하세요');
+            u.lang = 'ko-KR';
+            u.rate = 0.7;
+            u.volume = 1.0;
+            u.onstart = () => log('✅ TTS 시작됨');
+            u.onend = () => log('✅ TTS 완료');
+            u.onerror = (e) => log('❌ TTS 오류: ' + e.error);
+            speechSynthesis.speak(u);
+            log('speak() 호출됨');
+        }, 100);
+    } catch(e) {
+        log('❌ 예외: ' + e.message);
+    }
+}
+
+// ② 음성 목록
+function testVoices() {
+    const voices = speechSynthesis.getVoices();
+    log('음성 수: ' + voices.length);
+    voices.forEach(v => log('  ' + v.lang + ' / ' + v.name));
+    if (voices.length === 0) log('⚠️ 음성 없음 - onvoiceschanged 대기중');
+    speechSynthesis.onvoiceschanged = () => {
+        const v2 = speechSynthesis.getVoices();
+        log('로드 후 음성 수: ' + v2.length);
+        v2.forEach(v => log('  ' + v.lang + ' / ' + v.name));
+    };
+}
+
+// ③ 녹음 테스트
+function testRec() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { log('❌ SpeechRecognition 없음'); return; }
+    log('녹음 시작...');
+    const btn = document.getElementById('recBtn');
+    btn.textContent = '녹음 중...';
+    btn.style.background = '#ef4444';
+
+    const r = new SR();
+    r.lang = 'ko-KR';
+    r.onstart = () => log('✅ 녹음 시작됨');
+    r.onresult = (e) => log('✅ 인식: ' + e.results[0][0].transcript);
+    r.onerror = (e) => log('❌ 녹음 오류: ' + e.error);
+    r.onend = () => {
+        log('녹음 종료');
+        btn.textContent = '③ 녹음 테스트';
+        btn.style.background = '#f59e0b';
+    };
+    try { r.start(); } catch(e) { log('❌ start 오류: ' + e.message); }
+}
+</script>
+</body>
+</html>
