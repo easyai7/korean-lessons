@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -497,10 +498,20 @@ function explain(btn, text) {
 // ─── TTS ───
 function speak(text) {
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'ko-KR';
-    u.rate = 0.7;
-    speechSynthesis.speak(u);
+    const doSpeak = () => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ko-KR';
+        u.rate = 0.7;
+        const voices = speechSynthesis.getVoices();
+        const koVoice = voices.find(v => v.lang.startsWith('ko'));
+        if (koVoice) u.voice = koVoice;
+        speechSynthesis.speak(u);
+    };
+    if (speechSynthesis.getVoices().length > 0) {
+        doSpeak();
+    } else {
+        speechSynthesis.onvoiceschanged = () => { doSpeak(); };
+    }
 }
 
 // ─── 음성인식 ───
@@ -540,8 +551,14 @@ function record(btn, answer) {
             btn.classList.remove('recording');
             btn.innerHTML = '🎤 録音';
         };
-        recognition.start();
-        setTimeout(() => { try { recognition.stop(); } catch(e) {} }, 5000);
+        // 모바일에서 약간 지연 후 시작
+        setTimeout(() => {
+            try { recognition.start(); } catch(e) {
+                btn.classList.remove('recording');
+                btn.innerHTML = '🎤 録音';
+            }
+        }, 300);
+        setTimeout(() => { try { recognition.stop(); } catch(e) {} }, 6000);
     })
     .catch(() => {
         alert('❌ マイクへのアクセスに失敗しました。\nGitHub PagesまたはHTTPS環境で開いてください。');
