@@ -52,12 +52,15 @@
             font-weight: 600;
             color: #9ca3af;
             border-bottom: 3px solid transparent;
-            transition: all 0.3s;
+            transition: color 0.2s, border-color 0.2s, background 0.2s;
             /* 모바일 터치 최적화 */
-            -webkit-tap-highlight-color: rgba(245,158,11,0.2);
+            -webkit-tap-highlight-color: rgba(245,158,11,0.3);
             touch-action: manipulation;
             user-select: none;
-            min-height: 56px;
+            -webkit-user-select: none;
+            min-height: 60px;
+            position: relative;
+            z-index: 10;
         }
         .tab-btn:hover { color: #f59e0b; }
         .tab-btn.active { color: #d97706; border-bottom-color: #f59e0b; background: #fffbeb; }
@@ -941,14 +944,9 @@ function switchTab(tabId) {
 }
 
 document.querySelectorAll('.tab-btn').forEach(btn => {
-    // 모바일: touchstart로 즉시 반응 (300ms 딜레이 제거)
-    btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        switchTab(btn.dataset.tab);
-    }, { passive: false });
-
-    // PC: click 이벤트
-    btn.addEventListener('click', () => {
+    // pointerdown: 모바일/PC 모두 즉시 반응, preventDefault 없이 안전하게 동작
+    btn.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
         switchTab(btn.dataset.tab);
     });
 });
