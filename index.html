@@ -44,18 +44,23 @@
         }
         .tab-btn {
             flex: 1;
-            padding: 1.0rem 0.3rem;
+            padding: 1.2rem 0.3rem;
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: #9ca3af;
             border-bottom: 3px solid transparent;
             transition: all 0.3s;
+            /* 모바일 터치 최적화 */
+            -webkit-tap-highlight-color: rgba(245,158,11,0.2);
+            touch-action: manipulation;
+            user-select: none;
+            min-height: 56px;
         }
         .tab-btn:hover { color: #f59e0b; }
-        .tab-btn.active { color: #d97706; border-bottom-color: #f59e0b; }
+        .tab-btn.active { color: #d97706; border-bottom-color: #f59e0b; background: #fffbeb; }
         .content { padding: 1.25rem; }
         .tab-panel { display: none; }
         .tab-panel.active { display: block; animation: fadeIn 0.3s; }
@@ -908,30 +913,43 @@ function editDist(a, b) {
 // 탭 전환
 // ══════════════════════════════════════════
 
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        // 탭 전환 시 진행 중인 TTS / 오디오 정지
-        speechSynthesis.cancel();
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.onended = null;
-            currentAudio = null;
-        }
-        isDialogPlaying = false;
-        const playBtn = document.getElementById('btn-dialog-main');
-        if (playBtn) playBtn.innerHTML = '🎵 全部聞く';
-        const statusEl = document.getElementById('audio-status-main');
-        if (statusEl) statusEl.textContent = '';
+function switchTab(tabId) {
+    speechSynthesis.cancel();
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.onended = null;
+        currentAudio = null;
+    }
+    isDialogPlaying = false;
+    const playBtn = document.getElementById('btn-dialog-main');
+    if (playBtn) playBtn.innerHTML = '🎵 全部聞く';
+    const statusEl = document.getElementById('audio-status-main');
+    if (statusEl) statusEl.textContent = '';
 
-        // 패널 및 버튼 전환
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => {
-            b.classList.remove('active');
-            b.setAttribute('aria-selected', 'false');
-        });
-        document.getElementById(btn.dataset.tab).classList.add('active');
-        btn.classList.add('active');
-        btn.setAttribute('aria-selected', 'true');
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+    });
+    const panel = document.getElementById(tabId);
+    if (panel) panel.classList.add('active');
+    const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('active');
+        activeBtn.setAttribute('aria-selected', 'true');
+    }
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    // 모바일: touchstart로 즉시 반응 (300ms 딜레이 제거)
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        switchTab(btn.dataset.tab);
+    }, { passive: false });
+
+    // PC: click 이벤트
+    btn.addEventListener('click', () => {
+        switchTab(btn.dataset.tab);
     });
 });
 </script>
