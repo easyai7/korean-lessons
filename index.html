@@ -86,6 +86,7 @@
             transition: all 0.2s; font-size: 1.1rem;
         }
         .btn-listen:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-listen:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-mic {
             flex: 1;
             background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -96,6 +97,7 @@
             transition: all 0.2s; font-size: 1.1rem;
         }
         .btn-mic:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-mic:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-mic.recording {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             animation: pulse-btn 1s infinite;
@@ -193,17 +195,17 @@
         <div class="week-badge">📅 第01課 — 안녕하세요? 만나서 반가워요.</div>
     </div>
 
-    <div class="tabs">
-        <button class="tab-btn active" data-tab="words">📱 単語</button>
-        <button class="tab-btn" data-tab="sentences">📝 会話</button>
-        <button class="tab-btn" data-tab="grammar">📚 文法</button>
-        <button class="tab-btn" data-tab="hallyu">⭐ 韓流</button>
+    <div class="tabs" role="tablist">
+        <button class="tab-btn active" data-tab="words" role="tab" aria-selected="true" aria-controls="words">📱 単語</button>
+        <button class="tab-btn" data-tab="sentences" role="tab" aria-selected="false" aria-controls="sentences">📝 会話</button>
+        <button class="tab-btn" data-tab="grammar" role="tab" aria-selected="false" aria-controls="grammar">📚 文法</button>
+        <button class="tab-btn" data-tab="hallyu" role="tab" aria-selected="false" aria-controls="hallyu">⭐ 韓流</button>
     </div>
 
     <div class="content">
 
         <!-- ════════ 단어 ════════ -->
-        <div id="words" class="tab-panel active">
+        <div id="words" class="tab-panel active" role="tabpanel">
             <div class="section-title">📱 新出単語</div>
 
             <div class="pron-box">
@@ -218,10 +220,10 @@
                 <div class="card-ruby">読み: アンニョンハセヨ</div>
                 <div class="card-tip">💡 時間帯に関わらず使える万能あいさつ！</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('안녕하세요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'안녕하세요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('안녕하세요')" aria-label="안녕하세요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '안녕하세요')" aria-label="안녕하세요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -230,10 +232,10 @@
                 <div class="card-ruby">読み: マンナソ バンガウォヨ</div>
                 <div class="card-tip">💡 반갑다(うれしい)の丁寧な活用形</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('만나서 반가워요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'만나서반가워요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('만나서 반가워요')" aria-label="만나서 반가워요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '만나서 반가워요')" aria-label="만나서 반가워요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -242,10 +244,10 @@
                 <div class="card-ruby">読み: イルミ ムォエヨ　※連音！이름이→[이르미]</div>
                 <div class="card-tip">💡 이름+이 → 연음으로 [이르미]!</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('이름이 뭐예요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'이름이뭐예요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('이름이 뭐예요')" aria-label="이름이 뭐예요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '이름이 뭐예요')" aria-label="이름이 뭐예요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -254,10 +256,10 @@
                 <div class="card-ruby">読み: チョウム ペプケッスムニダ</div>
                 <div class="card-tip">💡 공식 인사에 사용. フォーマルな初対面に！</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('처음 뵙겠습니다')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'처음뵙겠습니다')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('처음 뵙겠습니다')" aria-label="처음 뵙겠습니다を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '처음 뵙겠습니다')" aria-label="처음 뵙겠습니다を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -266,10 +268,10 @@
                 <div class="card-ruby">読み: ハクセン / フェサウォン / ウィサ</div>
                 <div class="card-tip">💡 직업(職業) 단어를 외워 두세요!</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('학생, 회사원, 의사')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'학생회사원의사')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('학생, 회사원, 의사')" aria-label="학생 회사원 의사を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '학생 회사원 의사')" aria-label="학생 회사원 의사を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -278,18 +280,17 @@
                 <div class="card-ruby">読み: アンニョンヒ ゲセヨ</div>
                 <div class="card-tip">💡 떠나는 사람은 "안녕히 가세요"！</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('안녕히 계세요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'안녕히계세요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('안녕히 계세요')" aria-label="안녕히 계세요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '안녕히 계세요')" aria-label="안녕히 계세요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
         </div>
 
         <!-- ════════ 문장 ════════ -->
-        <div id="sentences" class="tab-panel">
+        <div id="sentences" class="tab-panel" role="tabpanel">
             <div class="section-title">📝 会話練習</div>
 
-            <!-- 대화 본문 -->
             <div class="dialog-box">
                 <div class="dialog-title">🗣️ 대화 — 처음 만났을 때 (CD1 Track 12)</div>
                 <div class="dialog-line">
@@ -342,11 +343,13 @@
                     </div>
                 </div>
                 <div style="margin-top:1rem;">
-                    <button class="btn-listen" id="btn-dialog-main" onclick="playAudioOrTTS('audio/lesson01_dialog.mp3', 'btn-dialog-main', dialogLines)">
+                    <button class="btn-listen" id="btn-dialog-main"
+                        onclick="playAudioOrTTS('audio/lesson01_dialog.mp3', 'btn-dialog-main', dialogLines)"
+                        aria-label="会話全文を再生">
                         🎵 全部聞く
                     </button>
                 </div>
-                <div style="margin-top:0.5rem; font-size:0.9rem; color:#9ca3af;" id="audio-status-main"></div>
+                <div style="margin-top:0.5rem; font-size:0.9rem; color:#9ca3af;" id="audio-status-main" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -354,10 +357,10 @@
                 <div class="card-mean">뜻: 私の名前はキム・ヨンヒです。</div>
                 <div class="card-tip">💡 이름 끝에 받침 없으면 → -예요</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('제 이름은 김영희예요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'제이름은김영희예요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('제 이름은 김영희예요')" aria-label="제 이름은 김영희예요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '제 이름은 김영희예요')" aria-label="제 이름은 김영희예요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -365,10 +368,10 @@
                 <div class="card-mean">뜻: 私は廣忠です。</div>
                 <div class="card-tip">💡 저는 = 私は（謙譲語）</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('저는 히로 다다시예요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'저는히로다다시예요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('저는 히로 다다시예요')" aria-label="저는 히로 다다시예요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '저는 히로 다다시예요')" aria-label="저는 히로 다다시예요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -376,10 +379,10 @@
                 <div class="card-mean">뜻: 日本人ですか？</div>
                 <div class="card-tip">💡 사람이에요 → 連音：[사라미에요]</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('일본 사람이에요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'일본사람이에요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('일본 사람이에요')" aria-label="일본 사람이에요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '일본 사람이에요')" aria-label="일본 사람이에요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -387,10 +390,10 @@
                 <div class="card-mean">뜻: いいえ。私は会社員です。</div>
                 <div class="card-tip">💡 받침 있으면 → -이에요　(회사원+이에요)</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('아니요. 저는 회사원이에요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'아니요저는회사원이에요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('아니요. 저는 회사원이에요')" aria-label="아니요 저는 회사원이에요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '아니요 저는 회사원이에요')" aria-label="아니요 저는 회사원이에요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -398,10 +401,10 @@
                 <div class="card-mean">뜻: 廣さんも学生ですか？</div>
                 <div class="card-tip">💡 -도 = 〜も　同じ質問をする時に使う</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('히로 씨도 학생이에요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'히로씨도학생이에요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('히로 씨도 학생이에요')" aria-label="히로 씨도 학생이에요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '히로 씨도 학생이에요')" aria-label="히로 씨도 학생이에요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
 
             <div class="card">
@@ -409,20 +412,20 @@
                 <div class="card-mean">뜻: どこの国の人ですか？</div>
                 <div class="card-tip">💡 어느=どの　나라=国　회화에서 자주 나옵니다!</div>
                 <div class="btn-row">
-                    <button class="btn-listen" onclick="speak('어느 나라 사람이에요')">▶ 聞く</button>
-                    <button class="btn-mic" onclick="record(this,'어느나라사람이에요')">🎤 録音</button>
+                    <button class="btn-listen" onclick="speak('어느 나라 사람이에요')" aria-label="어느 나라 사람이에요を聞く">▶ 聞く</button>
+                    <button class="btn-mic" onclick="record(this, '어느 나라 사람이에요')" aria-label="어느 나라 사람이에요を録音">🎤 録音</button>
                 </div>
-                <div class="result-box hidden"></div>
+                <div class="result-box hidden" aria-live="polite"></div>
             </div>
         </div>
 
         <!-- ════════ 문법 ════════ -->
-        <div id="grammar" class="tab-panel">
+        <div id="grammar" class="tab-panel" role="tabpanel">
             <div class="section-title">📚 第01課 重要文型</div>
 
             <div class="grammar-card">
                 <div class="grammar-title">文型1　제 이름은 -예요 / -이에요</div>
-                <button class="btn-explain" onclick="explain(this, '文型1の説明です。イダは名詞と結合して、主語と述語が同じであることを意味します。直前の名詞の語末にパッチムがある場合はイエヨ、パッチムがない場合はイェヨを使います。例えば、ハクセン、つまり学生にはパッチムがあるので、저는 학생이에요、私は学生です、となります。ヨンヒという名前にはパッチムがないので、제 이름은 김영희예요、私の名前はキムヨンヒです、となります。')">🔊 説明を聞く</button>
+                <button class="btn-explain" onclick="explain(this, '文型1の説明です。イダは名詞と結合して、主語と述語が同じであることを意味します。直前の名詞の語末にパッチムがある場合はイエヨ、パッチムがない場合はイェヨを使います。例えば、ハクセン、つまり学生にはパッチムがあるので、저는 학생이에요、私は学生です、となります。ヨンヒという名前にはパッチムがないので、제 이름은 김영희예요、私の名前はキムヨンヒです、となります。')" aria-label="文型1の説明を聞く">🔊 説明を聞く</button>
                 <div class="grammar-desc">
                     -이다は名詞と結合して、主語と述語が同じであることを意味する。<br>
                     直前の名詞の語末に<strong>パッチムあり → -이에요</strong><br>
@@ -440,7 +443,7 @@
 
             <div class="grammar-card">
                 <div class="grammar-title">文型2　저는 / 은·는 (주제 조사)</div>
-                <button class="btn-explain" onclick="explain(this, '文型2の説明です。저は1人称の謙譲語で、日本語の私、わたくし、に相当します。ウン・ヌンは日本語のハのような主題を表す副助詞です。直前の名詞の語末にパッチムがある場合はウン、パッチムがない場合はヌンを使います。例えば、저는 회사원이에요、私は会社員です。이름은 뭐예요、お名前は何ですか。このように使い分けます。')">🔊 説明を聞く</button>
+                <button class="btn-explain" onclick="explain(this, '文型2の説明です。저は1人称の謙譲語で、日本語の私、わたくし、に相当します。ウン・ヌンは日本語のハのような主題を表す副助詞です。直前の名詞の語末にパッチムがある場合はウン、パッチムがない場合はヌンを使います。例えば、저는 회사원이에요、私は会社員です。이름은 뭐예요、お名前は何ですか。このように使い分けます。')" aria-label="文型2の説明を聞く">🔊 説明を聞く</button>
                 <div class="grammar-desc">
                     저は1人称の謙譲語。日本語の「私（わたくし）」に相当する。<br>
                     -은/는は日本語の「-は」のような主題を表す副助詞。<br>
@@ -458,7 +461,7 @@
 
             <div class="grammar-card">
                 <div class="grammar-title">文型3　-사람이에요? / -사람이 아니에요</div>
-                <button class="btn-explain" onclick="explain(this, '文型3の説明です。国籍を聞いたり答えたりする表現です。질문할 때는 문장 끝을 올려서 발음します。否定する場合は、イ・ガ アニエヨという表現を使います。例えば、한국 사람이에요、韓国人ですか、と聞かれて、違う場合は、아니요、일본 사람이 아니에요、いいえ、日本人ではありません、と答えます。')">🔊 説明を聞く</button>
+                <button class="btn-explain" onclick="explain(this, '文型3の説明です。国籍を聞いたり答えたりする表現です。질문할 때는 문장 끝을 올려서 발음します。否定する場合は、イ・ガ アニエヨという表現を使います。例えば、한국 사람이에요、韓国人ですか、と聞かれて、違う場合は、아니요、일본 사람이 아니에요、いいえ、日本人ではありません、と答えます。')" aria-label="文型3の説明を聞く">🔊 説明を聞く</button>
                 <div class="grammar-desc">
                     国籍を聞く・答える表現。否定は<strong>-이/가 아니에요</strong>を使う。
                 </div>
@@ -474,7 +477,7 @@
 
             <div class="grammar-card">
                 <div class="grammar-title">文型4　-도 （〜も）</div>
-                <button class="btn-explain" onclick="explain(this, '文型4の説明です。ドは日本語のモ、という意味を表します。すでに出た話題と同じ内容について話す時に使います。主格助詞のイ・ガや主題を表す副助詞のウン・ヌンの代わりにドを使います。例えば、히로 씨도 학생이에요、廣さんも学生ですか。네、저도 학생이에요、はい、私も学生です。このように使います。')">🔊 説明を聞く</button>
+                <button class="btn-explain" onclick="explain(this, '文型4の説明です。ドは日本語のモ、という意味を表します。すでに出た話題と同じ内容について話す時に使います。主格助詞のイ・ガや主題を表す副助詞のウン・ヌンの代わりにドを使います。例えば、히로 씨도 학생이에요、廣さんも学生ですか。네、저도 학생이에요、はい、私も学生です。このように使います。')" aria-label="文型4の説明を聞く">🔊 説明を聞く</button>
                 <div class="grammar-desc">
                     -도は「〜も」を意味する。同じ質問をする場面で、主格助詞-이/가や主題を表す副助詞-은/는の代わりに使われる。
                 </div>
@@ -490,7 +493,7 @@
         </div>
 
         <!-- ════════ 한류 ════════ -->
-        <div id="hallyu" class="tab-panel">
+        <div id="hallyu" class="tab-panel" role="tabpanel">
             <div class="section-title">⭐ 韓流情報</div>
 
             <div class="news-card">
@@ -546,28 +549,91 @@
 </div>
 
 <script>
-// ─── 문법 설명 TTS (일본어) ───
+// ══════════════════════════════════════════
+// 상태 관리
+// ══════════════════════════════════════════
+
+/** 현재 녹음 중인지 여부 (동시 녹음 방지) */
+let isRecording = false;
+
+/** 현재 재생 중인 오디오 객체 */
+let currentAudio = null;
+
+/** 대화 전체 TTS 진행 중 여부 */
+let isDialogPlaying = false;
+
+// ══════════════════════════════════════════
+// 문법 설명 TTS (일본어)
+// ══════════════════════════════════════════
+
 function explain(btn, text) {
-    speechSynthesis.cancel();
+    // 이미 이 버튼이 재생 중이면 → 정지
     if (btn.classList.contains('speaking')) {
+        speechSynthesis.cancel();
         btn.classList.remove('speaking');
         btn.innerHTML = '🔊 説明を聞く';
         return;
     }
+    // 다른 TTS 모두 정지
+    speechSynthesis.cancel();
+
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'ja-JP';
     u.rate = 0.9;
+
     btn.classList.add('speaking');
     btn.innerHTML = '⏹ 停止';
+
     u.onend = () => {
         btn.classList.remove('speaking');
         btn.innerHTML = '🔊 説明を聞く';
     };
+    u.onerror = () => {
+        btn.classList.remove('speaking');
+        btn.innerHTML = '🔊 説明を聞く';
+    };
+
     speechSynthesis.speak(u);
 }
 
-// ─── TTS ───
-// ─── 대화 전체 읽기 ───
+// ══════════════════════════════════════════
+// 단어/문장 TTS (한국어)
+// ══════════════════════════════════════════
+
+/**
+ * voices 로드를 보장한 후 콜백 실행
+ * onvoiceschanged를 addEventListener로 등록해 중복 등록 문제 해결
+ */
+function withVoices(callback) {
+    const voices = speechSynthesis.getVoices();
+    if (voices.length > 0) {
+        callback(voices);
+    } else {
+        speechSynthesis.addEventListener('voiceschanged', function handler() {
+            speechSynthesis.removeEventListener('voiceschanged', handler);
+            callback(speechSynthesis.getVoices());
+        });
+    }
+}
+
+function speak(text) {
+    // 녹음 중이면 TTS를 먼저 중지
+    speechSynthesis.cancel();
+
+    withVoices((voices) => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ko-KR';
+        u.rate = 0.7;
+        const koVoice = voices.find(v => v.lang.startsWith('ko'));
+        if (koVoice) u.voice = koVoice;
+        speechSynthesis.speak(u);
+    });
+}
+
+// ══════════════════════════════════════════
+// 대화 전체 읽기
+// ══════════════════════════════════════════
+
 const dialogLines = [
     '안녕하세요? 제 이름은 김영희예요.',
     '네, 안녕하세요? 저는 히로 다다시예요.',
@@ -578,163 +644,245 @@ const dialogLines = [
     '만나서 반가워요.'
 ];
 
-let currentAudio = null;
-
 function playAudioOrTTS(audioSrc, btnId, ttsLines) {
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
+    const btn = document.getElementById(btnId);
+    const statusEl = document.getElementById('audio-status-main');
+
+    // 재생 중이면 → 정지
+    if (isDialogPlaying) {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.onended = null;
+            currentAudio = null;
+        }
         speechSynthesis.cancel();
-        const btn = document.getElementById(btnId);
+        isDialogPlaying = false;
         if (btn) btn.innerHTML = '🎵 全部聞く';
-        const statusEl = document.getElementById('audio-status-main');
         if (statusEl) statusEl.textContent = '';
         return;
     }
-    const btn = document.getElementById(btnId);
-    const statusEl = document.getElementById('audio-status-main');
+
+    isDialogPlaying = true;
+    if (btn) btn.innerHTML = '⏹ 停止中';
+
     const audio = new Audio(audioSrc);
+
+    // MP3 로드 성공
     audio.oncanplaythrough = () => {
         currentAudio = audio;
-        if (btn) btn.innerHTML = '⏹ 停止中';
         if (statusEl) statusEl.textContent = '🎵 MP3再生中...';
         audio.play();
         audio.onended = () => {
             currentAudio = null;
+            isDialogPlaying = false;
             if (btn) btn.innerHTML = '🎵 全部聞く';
             if (statusEl) statusEl.textContent = '';
         };
     };
+
+    // MP3 로드 실패 → TTS fallback
     audio.onerror = () => {
+        currentAudio = null;
         if (statusEl) statusEl.textContent = '🔊 TTS再生中（MP3未設定）';
-        if (btn) btn.innerHTML = '⏹ 停止中';
         speakLines(ttsLines, () => {
+            isDialogPlaying = false;
             if (btn) btn.innerHTML = '🎵 全部聞く';
             if (statusEl) statusEl.textContent = '';
-            currentAudio = null;
         });
     };
+
     currentAudio = audio;
     audio.load();
+
+    // 1.2초 후에도 readyState가 0이면 MP3 없다고 판단 → TTS로 전환
+    // (audio.onerror를 직접 호출하지 않고 로직을 직접 실행)
     setTimeout(() => {
         if (currentAudio === audio && audio.readyState === 0) {
-            audio.onerror();
             currentAudio = null;
+            audio.onerror = null; // 이후 중복 호출 방지
+            if (!isDialogPlaying) return; // 이미 정지됐으면 무시
+            if (statusEl) statusEl.textContent = '🔊 TTS再生中（MP3未設定）';
+            speakLines(ttsLines, () => {
+                isDialogPlaying = false;
+                if (btn) btn.innerHTML = '🎵 全部聞く';
+                if (statusEl) statusEl.textContent = '';
+            });
         }
     }, 1200);
 }
 
+/**
+ * 문장 배열을 순서대로 TTS 재생
+ * withVoices를 사용해 onvoiceschanged 중복 등록 방지
+ */
 function speakLines(lines, onDone) {
     speechSynthesis.cancel();
     let i = 0;
+
     function next() {
+        // 정지 요청이 들어왔으면 중단
+        if (!isDialogPlaying) { if (onDone) onDone(); return; }
         if (i >= lines.length) { if (onDone) onDone(); return; }
-        const doSpeak = () => {
+
+        withVoices((voices) => {
             const u = new SpeechSynthesisUtterance(lines[i++]);
-            u.lang = 'ko-KR'; u.rate = 0.75;
-            const voices = speechSynthesis.getVoices();
+            u.lang = 'ko-KR';
+            u.rate = 0.75;
             const koVoice = voices.find(v => v.lang.startsWith('ko'));
             if (koVoice) u.voice = koVoice;
             u.onend = next;
+            u.onerror = next; // 오류 시에도 다음 줄로 진행
             speechSynthesis.speak(u);
-        };
-        if (speechSynthesis.getVoices().length > 0) { doSpeak(); }
-        else { speechSynthesis.onvoiceschanged = () => doSpeak(); }
+        });
     }
+
     next();
 }
 
-function speak(text) {
-    speechSynthesis.cancel();
-    const doSpeak = () => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'ko-KR';
-        u.rate = 0.7;
-        const voices = speechSynthesis.getVoices();
-        const koVoice = voices.find(v => v.lang.startsWith('ko'));
-        if (koVoice) u.voice = koVoice;
-        speechSynthesis.speak(u);
-    };
-    if (speechSynthesis.getVoices().length > 0) {
-        doSpeak();
-    } else {
-        speechSynthesis.onvoiceschanged = () => { doSpeak(); };
-    }
-}
+// ══════════════════════════════════════════
+// 음성인식 (발음 체크)
+// ══════════════════════════════════════════
 
-// ─── 음성인식 ───
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 function record(btn, answer) {
-    if (!SR) { alert('このブラウザは音声認識に対応していません。\nChromeを使ってください。'); return; }
+    // 브라우저 지원 확인
+    if (!SR) {
+        alert('このブラウザは音声認識に対応していません。\nChromeを使ってください。');
+        return;
+    }
+
+    // 동시 녹음 방지
+    if (isRecording) {
+        alert('録音中です。先に終わらせてください。');
+        return;
+    }
+
+    // TTS 재생 중이면 먼저 중지
+    speechSynthesis.cancel();
+
     const card = btn.closest('.card');
     const resultBox = card.querySelector('.result-box');
     resultBox.classList.add('hidden');
 
     navigator.mediaDevices.getUserMedia({ audio: true })
-    .then(stream => {
-        btn.classList.add('recording');
-        btn.innerHTML = '⏹ 録音中...';
-        const recognition = new SR();
-        recognition.lang = 'ko-KR';
-        recognition.continuous = false;
-        recognition.interimResults = false;
+        .then(stream => {
+            isRecording = true;
+            btn.classList.add('recording');
+            btn.innerHTML = '⏹ 録音中...';
+            btn.disabled = false; // 버튼 자체는 유지 (정지용)
 
-        recognition.onresult = (e) => {
-            const heard = e.results[0][0].transcript;
-            stream.getTracks().forEach(t => t.stop());
-            btn.classList.remove('recording');
-            btn.innerHTML = '🎤 録音';
-            showScore(card, answer, heard);
-        };
-        recognition.onerror = () => {
-            stream.getTracks().forEach(t => t.stop());
-            btn.classList.remove('recording');
-            btn.innerHTML = '🎤 録音';
-            resultBox.innerHTML = '<div class="result-msg">❌ 認識失敗。もう一度試してください。</div>';
-            resultBox.classList.remove('hidden');
-        };
-        recognition.onend = () => {
-            stream.getTracks().forEach(t => t.stop());
-            btn.classList.remove('recording');
-            btn.innerHTML = '🎤 録音';
-        };
-        // 모바일에서 약간 지연 후 시작
-        setTimeout(() => {
-            try { recognition.start(); } catch(e) {
+            const recognition = new SR();
+            recognition.lang = 'ko-KR';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+
+            let recognized = false; // onresult/onerror 중복 처리 방지
+
+            // 결과 수신
+            recognition.onresult = (e) => {
+                if (recognized) return;
+                recognized = true;
+                const heard = e.results[0][0].transcript;
+                showScore(card, answer, heard);
+            };
+
+            // 인식 오류
+            recognition.onerror = (e) => {
+                if (recognized) return;
+                recognized = true;
+                resultBox.innerHTML = '<div class="result-msg">❌ 認識失敗。もう一度試してください。</div>';
+                resultBox.classList.remove('hidden');
+            };
+
+            // 인식 종료 (onresult / onerror 이후 항상 호출됨)
+            recognition.onend = () => {
+                stream.getTracks().forEach(t => t.stop()); // stream은 여기서만 정리
+                isRecording = false;
                 btn.classList.remove('recording');
                 btn.innerHTML = '🎤 録音';
-            }
-        }, 300);
-        setTimeout(() => { try { recognition.stop(); } catch(e) {} }, 6000);
-    })
-    .catch(() => {
-        alert('❌ マイクへのアクセスに失敗しました。\nGitHub PagesまたはHTTPS環境で開いてください。');
-    });
+            };
+
+            // 모바일 대응: 약간 지연 후 시작
+            setTimeout(() => {
+                try {
+                    recognition.start();
+                } catch (err) {
+                    stream.getTracks().forEach(t => t.stop());
+                    isRecording = false;
+                    btn.classList.remove('recording');
+                    btn.innerHTML = '🎤 録音';
+                }
+            }, 300);
+
+            // 6초 후 자동 정지
+            setTimeout(() => {
+                try { recognition.stop(); } catch (_) {}
+            }, 6000);
+        })
+        .catch(() => {
+            alert('❌ マイクへのアクセスに失敗しました。\nGitHub PagesまたはHTTPS環境で開いてください。');
+        });
 }
 
+// ══════════════════════════════════════════
+// 채점 로직
+// ══════════════════════════════════════════
+
 function showScore(card, answer, heard) {
-    const norm = s => s.replace(/[\s.。，,!！?？]/g, '');
+    // 공백·구두점 제거 후 비교 (answer도 자연스럽게 넘겨도 됨)
+    const norm = s => s.replace(/[\s.。，,!！?？]/g, '').toLowerCase();
     const a = norm(answer);
     const b = norm(heard);
-    const pct = Math.max(0, Math.round(similarity(a, b) * 100));
+
+    // 자모 분리 후 유사도 계산 (한국어 발음체크 정확도 향상)
+    const aJamo = decomposeHangul(a);
+    const bJamo = decomposeHangul(b);
+    const pct = Math.max(0, Math.round(similarity(aJamo, bJamo) * 100));
+
     let emoji, msg;
-    if (pct === 100)    { emoji = '🎉'; msg = '完璧です！'; }
-    else if (pct >= 85) { emoji = '⭐'; msg = 'とても上手！'; }
-    else if (pct >= 70) { emoji = '👍'; msg = 'いい感じ！'; }
-    else if (pct >= 50) { emoji = '💪'; msg = 'もう一度！'; }
-    else                { emoji = '🔄'; msg = '最初から挑戦！'; }
+    if      (pct === 100) { emoji = '🎉'; msg = '完璧です！'; }
+    else if (pct >= 85)   { emoji = '⭐'; msg = 'とても上手！'; }
+    else if (pct >= 70)   { emoji = '👍'; msg = 'いい感じ！'; }
+    else if (pct >= 50)   { emoji = '💪'; msg = 'もう一度！'; }
+    else                  { emoji = '🔄'; msg = '最初から挑戦！'; }
 
     const box = card.querySelector('.result-box');
     box.innerHTML =
         `<div class="result-score">${pct}点</div>` +
         `<div class="result-msg">${emoji} ${msg}</div>` +
-        `<div class="result-recognized">認識結果: "${heard}"</div>`;
+        `<div class="result-recognized">認識結果: 「${heard}」</div>`;
     box.classList.remove('hidden');
 }
 
+/**
+ * 한글 자모 분리 (초성·중성·종성)
+ * 유사 발음('핵생' vs '학생' 등)도 부분 점수를 줄 수 있도록
+ */
+function decomposeHangul(str) {
+    const CHOSEONG  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+    const JUNGSEONG = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+    const JONGSEONG = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+    let result = '';
+    for (const ch of str) {
+        const code = ch.charCodeAt(0);
+        if (code >= 0xAC00 && code <= 0xD7A3) {
+            const offset = code - 0xAC00;
+            const cho  = Math.floor(offset / (21 * 28));
+            const jung = Math.floor((offset % (21 * 28)) / 28);
+            const jong = offset % 28;
+            result += CHOSEONG[cho] + JUNGSEONG[jung] + JONGSEONG[jong];
+        } else {
+            result += ch;
+        }
+    }
+    return result;
+}
+
+/** 레벤슈타인 거리 기반 유사도 (0~1) */
 function similarity(s1, s2) {
-    const longer = s1.length >= s2.length ? s1 : s2;
+    const longer  = s1.length >= s2.length ? s1 : s2;
     const shorter = s1.length >= s2.length ? s2 : s1;
     if (!longer.length) return 1;
     return (longer.length - editDist(longer, shorter)) / longer.length;
@@ -742,24 +890,48 @@ function similarity(s1, s2) {
 
 function editDist(a, b) {
     const m = a.length, n = b.length;
-    const dp = Array.from({length: m+1}, () => Array(n+1).fill(0));
-    for (let i = 0; i <= m; i++) dp[i][0] = i;
-    for (let j = 0; j <= n; j++) dp[0][j] = j;
-    for (let i = 1; i <= m; i++)
-        for (let j = 1; j <= n; j++)
-            dp[i][j] = a[i-1] === b[j-1]
-                ? dp[i-1][j-1]
-                : 1 + Math.min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]);
-    return dp[m][n];
+    // 메모리 절약: 1D 배열 사용
+    let prev = Array.from({length: n + 1}, (_, i) => i);
+    for (let i = 1; i <= m; i++) {
+        const curr = [i];
+        for (let j = 1; j <= n; j++) {
+            curr[j] = a[i-1] === b[j-1]
+                ? prev[j-1]
+                : 1 + Math.min(prev[j], curr[j-1], prev[j-1]);
+        }
+        prev = curr;
+    }
+    return prev[n];
 }
 
-// ─── 탭 전환 ───
+// ══════════════════════════════════════════
+// 탭 전환
+// ══════════════════════════════════════════
+
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+        // 탭 전환 시 진행 중인 TTS / 오디오 정지
+        speechSynthesis.cancel();
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.onended = null;
+            currentAudio = null;
+        }
+        isDialogPlaying = false;
+        const playBtn = document.getElementById('btn-dialog-main');
+        if (playBtn) playBtn.innerHTML = '🎵 全部聞く';
+        const statusEl = document.getElementById('audio-status-main');
+        if (statusEl) statusEl.textContent = '';
+
+        // 패널 및 버튼 전환
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+        });
         document.getElementById(btn.dataset.tab).classList.add('active');
         btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
     });
 });
 </script>
