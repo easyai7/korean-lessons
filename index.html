@@ -120,6 +120,17 @@
         }
         .hidden { display: none !important; }
 
+        .dialog-box {
+            background: #fffbeb; border-radius: 0.75rem;
+            padding: 1.2rem; margin-bottom: 1rem;
+            border-left: 4px solid #f59e0b;
+        }
+        .dialog-title { font-size: 1.05rem; font-weight: 700; color: #78350f; margin-bottom: 0.75rem; }
+        .dialog-line { display: flex; gap: 0.5rem; align-items: flex-start; margin-bottom: 0.5rem; }
+        .dialog-speaker { font-weight: 700; color: #d97706; min-width: 3rem; font-size: 1.05rem; }
+        .dialog-text { font-size: 1.1rem; color: #1f2937; line-height: 1.6; }
+        .dialog-jp { font-size: 0.95rem; color: #6b7280; }
+
         /* 문법 */
         .grammar-card {
             background: #fffbeb; border-left: 4px solid #f59e0b;
@@ -276,7 +287,67 @@
 
         <!-- ════════ 문장 ════════ -->
         <div id="sentences" class="tab-panel">
-            <div class="section-title">📝 会話</div>
+            <div class="section-title">📝 会話練習</div>
+
+            <!-- 대화 본문 -->
+            <div class="dialog-box">
+                <div class="dialog-title">🗣️ 대화 — 처음 만났을 때 (CD1 Track 12)</div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">영희</div>
+                    <div>
+                        <div class="dialog-text">안녕하세요? 제 이름은 김영희예요.</div>
+                        <div class="dialog-jp">こんにちは。私の名前はキム・ヨンヒです。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">히로</div>
+                    <div>
+                        <div class="dialog-text">네, 안녕하세요? 저는 히로 다다시예요.</div>
+                        <div class="dialog-jp">はい、こんにちは。私は廣忠です。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">영희</div>
+                    <div>
+                        <div class="dialog-text">히로 씨, 일본 사람이에요?</div>
+                        <div class="dialog-jp">廣さんは日本人ですか。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">히로</div>
+                    <div>
+                        <div class="dialog-text">네. 일본 사람이에요. 영희 씨는 학생이에요?</div>
+                        <div class="dialog-jp">はい、日本人です。ヨンヒさんは学生ですか。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">영희</div>
+                    <div>
+                        <div class="dialog-text">네. 학생이에요. 히로 씨도 학생이에요?</div>
+                        <div class="dialog-jp">はい、学生です。廣さんも学生ですか。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">히로</div>
+                    <div>
+                        <div class="dialog-text">아니요. 저는 회사원이에요.</div>
+                        <div class="dialog-jp">いいえ、私は会社員です。</div>
+                    </div>
+                </div>
+                <div class="dialog-line">
+                    <div class="dialog-speaker">영희</div>
+                    <div>
+                        <div class="dialog-text">만나서 반가워요.</div>
+                        <div class="dialog-jp">お会いできてうれしいです。</div>
+                    </div>
+                </div>
+                <div style="margin-top:1rem;">
+                    <button class="btn-listen" id="btn-dialog-main" onclick="playAudioOrTTS('audio/lesson01_dialog.mp3', 'btn-dialog-main', dialogLines)">
+                        🎵 全部聞く
+                    </button>
+                </div>
+                <div style="margin-top:0.5rem; font-size:0.9rem; color:#9ca3af;" id="audio-status-main"></div>
+            </div>
 
             <div class="card">
                 <div class="card-kr">제 이름은 김영희예요.</div>
@@ -496,6 +567,83 @@ function explain(btn, text) {
 }
 
 // ─── TTS ───
+// ─── 대화 전체 읽기 ───
+const dialogLines = [
+    '안녕하세요? 제 이름은 김영희예요.',
+    '네, 안녕하세요? 저는 히로 다다시예요.',
+    '히로 씨, 일본 사람이에요?',
+    '네. 일본 사람이에요. 영희 씨는 학생이에요?',
+    '네. 학생이에요. 히로 씨도 학생이에요?',
+    '아니요. 저는 회사원이에요.',
+    '만나서 반가워요.'
+];
+
+let currentAudio = null;
+
+function playAudioOrTTS(audioSrc, btnId, ttsLines) {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+        speechSynthesis.cancel();
+        const btn = document.getElementById(btnId);
+        if (btn) btn.innerHTML = '🎵 全部聞く';
+        const statusEl = document.getElementById('audio-status-main');
+        if (statusEl) statusEl.textContent = '';
+        return;
+    }
+    const btn = document.getElementById(btnId);
+    const statusEl = document.getElementById('audio-status-main');
+    const audio = new Audio(audioSrc);
+    audio.oncanplaythrough = () => {
+        currentAudio = audio;
+        if (btn) btn.innerHTML = '⏹ 停止中';
+        if (statusEl) statusEl.textContent = '🎵 MP3再生中...';
+        audio.play();
+        audio.onended = () => {
+            currentAudio = null;
+            if (btn) btn.innerHTML = '🎵 全部聞く';
+            if (statusEl) statusEl.textContent = '';
+        };
+    };
+    audio.onerror = () => {
+        if (statusEl) statusEl.textContent = '🔊 TTS再生中（MP3未設定）';
+        if (btn) btn.innerHTML = '⏹ 停止中';
+        speakLines(ttsLines, () => {
+            if (btn) btn.innerHTML = '🎵 全部聞く';
+            if (statusEl) statusEl.textContent = '';
+            currentAudio = null;
+        });
+    };
+    currentAudio = audio;
+    audio.load();
+    setTimeout(() => {
+        if (currentAudio === audio && audio.readyState === 0) {
+            audio.onerror();
+            currentAudio = null;
+        }
+    }, 1200);
+}
+
+function speakLines(lines, onDone) {
+    speechSynthesis.cancel();
+    let i = 0;
+    function next() {
+        if (i >= lines.length) { if (onDone) onDone(); return; }
+        const doSpeak = () => {
+            const u = new SpeechSynthesisUtterance(lines[i++]);
+            u.lang = 'ko-KR'; u.rate = 0.75;
+            const voices = speechSynthesis.getVoices();
+            const koVoice = voices.find(v => v.lang.startsWith('ko'));
+            if (koVoice) u.voice = koVoice;
+            u.onend = next;
+            speechSynthesis.speak(u);
+        };
+        if (speechSynthesis.getVoices().length > 0) { doSpeak(); }
+        else { speechSynthesis.onvoiceschanged = () => doSpeak(); }
+    }
+    next();
+}
+
 function speak(text) {
     speechSynthesis.cancel();
     const doSpeak = () => {
