@@ -557,15 +557,13 @@
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
 // ══════════════════════════════════════════
 // 상태 관리
 // ══════════════════════════════════════════
 
 /** 현재 녹음 중인지 여부 (동시 녹음 방지) */
 let isRecording = false;
-
-/** 현재 재생 중인 오디오 객체 */
-let currentAudio = null;
 
 /** 대화 전체 TTS 진행 중 여부 */
 let isDialogPlaying = false;
@@ -652,17 +650,12 @@ const dialogLines = [
     '만나서 반가워요.'
 ];
 
-function playAudioOrTTS(audioSrc, btnId, ttsLines) {
+function playDialog(btnId, ttsLines) {
     const btn = document.getElementById(btnId);
     const statusEl = document.getElementById('audio-status-main');
 
     // 재생 중이면 → 정지
     if (isDialogPlaying) {
-        if (currentAudio) {
-            currentAudio.pause();
-            currentAudio.onended = null;
-            currentAudio = null;
-        }
         speechSynthesis.cancel();
         isDialogPlaying = false;
         if (btn) btn.innerHTML = '🎵 全部聞く';
@@ -672,51 +665,13 @@ function playAudioOrTTS(audioSrc, btnId, ttsLines) {
 
     isDialogPlaying = true;
     if (btn) btn.innerHTML = '⏹ 停止中';
+    if (statusEl) statusEl.textContent = '🔊 TTS再生中...';
 
-    const audio = new Audio(audioSrc);
-
-    // MP3 로드 성공
-    audio.oncanplaythrough = () => {
-        currentAudio = audio;
-        if (statusEl) statusEl.textContent = '🎵 MP3再生中...';
-        audio.play();
-        audio.onended = () => {
-            currentAudio = null;
-            isDialogPlaying = false;
-            if (btn) btn.innerHTML = '🎵 全部聞く';
-            if (statusEl) statusEl.textContent = '';
-        };
-    };
-
-    // MP3 로드 실패 → TTS fallback
-    audio.onerror = () => {
-        currentAudio = null;
-        if (statusEl) statusEl.textContent = '🔊 TTS再生中（MP3未設定）';
-        speakLines(ttsLines, () => {
-            isDialogPlaying = false;
-            if (btn) btn.innerHTML = '🎵 全部聞く';
-            if (statusEl) statusEl.textContent = '';
-        });
-    };
-
-    currentAudio = audio;
-    audio.load();
-
-    // 1.2초 후에도 readyState가 0이면 MP3 없다고 판단 → TTS로 전환
-    // (audio.onerror를 직접 호출하지 않고 로직을 직접 실행)
-    setTimeout(() => {
-        if (currentAudio === audio && audio.readyState === 0) {
-            currentAudio = null;
-            audio.onerror = null; // 이후 중복 호출 방지
-            if (!isDialogPlaying) return; // 이미 정지됐으면 무시
-            if (statusEl) statusEl.textContent = '🔊 TTS再生中（MP3未設定）';
-            speakLines(ttsLines, () => {
-                isDialogPlaying = false;
-                if (btn) btn.innerHTML = '🎵 全部聞く';
-                if (statusEl) statusEl.textContent = '';
-            });
-        }
-    }, 1200);
+    speakLines(ttsLines, () => {
+        isDialogPlaying = false;
+        if (btn) btn.innerHTML = '🎵 全部聞く';
+        if (statusEl) statusEl.textContent = '';
+    });
 }
 
 /**
@@ -904,11 +859,6 @@ function editDist(a, b) {
 
 function switchTab(tabId) {
     speechSynthesis.cancel();
-    if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.onended = null;
-        currentAudio = null;
-    }
     isDialogPlaying = false;
     const playBtn = document.getElementById('btn-dialog-main');
     if (playBtn) playBtn.innerHTML = '🎵 全部聞く';
@@ -943,7 +893,7 @@ document.querySelectorAll('.btn-listen').forEach(btn => {
         if (text) speak(text);
         // dialog 전체 재생 버튼
         if (btn.id === 'btn-dialog-main') {
-            playAudioOrTTS('audio/lesson01_dialog.mp3', 'btn-dialog-main', dialogLines);
+            playDialog('btn-dialog-main', dialogLines);
         }
     });
 });
@@ -961,6 +911,8 @@ document.querySelectorAll('.btn-explain').forEach(btn => {
         if (text) explain(btn, text);
     });
 });
+
+}); // DOMContentLoaded
 </script>
 </body>
 </html>
