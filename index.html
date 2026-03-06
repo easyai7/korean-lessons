@@ -552,12 +552,26 @@
             1. ▶ <strong>聞く</strong> → 正しい発音を聞く<br>
             2. 🎤 <strong>録音</strong> → 5秒間まねして話す<br>
             3. 自動採点されます！<br><br>
-            <strong>⚠️ 注意:</strong> 録音機能はGitHub PagesまたはHTTPSで開いてください。ファイルを直接開くと録音が動作しません。
+            <strong>⚠️ 注意:</strong> 録音機能はGitHub PagesまたはHTTPSで開いてください。ファイルを直接開くと録音が動作しません。<br><br>
+            <button onclick="runDiag()" style="background:#6366f1;color:#fff;border:none;border-radius:8px;padding:0.5rem 1rem;font-size:16px;cursor:pointer;">🔍 진단 버튼</button>
         </div>
     </div>
 </div>
 
 <script>
+function runDiag() {
+    const hasTTS = 'speechSynthesis' in window;
+    const hasSR = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    const voices = hasTTS ? speechSynthesis.getVoices().length : 'N/A';
+    const ua = navigator.userAgent.substring(0, 80);
+    alert(
+        'TTS: ' + (hasTTS ? 'OK' : 'NO') + '\n' +
+        'SpeechRecognition: ' + (hasSR ? 'OK' : 'NO') + '\n' +
+        'Voices loaded: ' + voices + '\n' +
+        'UA: ' + ua
+    );
+}
+
 // ══════════════════════════════════════════
 // 상태 관리
 // ══════════════════════════════════════════
