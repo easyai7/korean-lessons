@@ -1,0 +1,26 @@
+{
+  "name": "韓国語発音練習",
+  "short_name": "韓国語",
+  "description": "韓国語発音練習アプリ — 第01課",
+  "start_url": "/korean-lessons/",
+  "scope": "/korean-lessons/",
+  "display": "standalone",
+  "background_color": "#fffbeb",
+  "theme_color": "#f59e0b",
+  "orientation": "portrait",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

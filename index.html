@@ -1,11 +1,16 @@
 
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>한국어 발음 학습 - 제01과</title>
+<meta name="theme-color" content="#f59e0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="韓国語">
+<link rel="manifest" href="manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -197,6 +202,21 @@
     </style>
 </head>
 <body>
+
+<!-- PWA 설치 안내 배너 (Android Chrome) -->
+<div id="install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#f59e0b; color:#1a1200; padding:0.9rem 1.2rem; z-index:999; align-items:center; gap:0.8rem; box-shadow:0 -4px 16px rgba(0,0,0,0.15);">
+  <div style="flex:1; font-size:15px; font-weight:800;">📲 ホーム画面に追加してアプリとして使えます！</div>
+  <button onclick="installApp()" style="background:#1a1200; color:#fff; border:none; border-radius:8px; padding:0.5rem 1rem; font-size:14px; font-weight:800; cursor:pointer; flex-shrink:0;">追加する</button>
+  <button onclick="this.parentElement.style.display='none'" style="background:none; border:none; font-size:20px; cursor:pointer; flex-shrink:0;">✕</button>
+</div>
+
+<!-- PWA 설치 안내 배너 (iOS Safari) -->
+<div id="ios-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#f59e0b; color:#1a1200; padding:0.9rem 1.2rem; z-index:999; box-shadow:0 -4px 16px rgba(0,0,0,0.15);">
+  <div style="font-size:15px; font-weight:800; margin-bottom:0.4rem;">📲 ホーム画面に追加する方法</div>
+  <div style="font-size:13px; line-height:1.7;">① 下の <strong>□↑ 共有ボタン</strong> をタップ<br>② <strong>「ホーム画面に追加」</strong> を選択</div>
+  <button onclick="document.getElementById('ios-banner').style.display='none'" style="position:absolute; top:0.7rem; right:0.9rem; background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
+</div>
+
 <div class="container">
     <div class="header">
         <h1>🎤 한국어 발음 학습</h1>
@@ -950,6 +970,53 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+});
+</script>
+
+<script>
+// PWA 서비스 워커 등록
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/korean-lessons/sw.js')
+      .catch(() => {}); // 실패해도 앱은 정상 작동
+  });
+}
+
+// iOS Safari: 홈 화면 추가 안내 배너 표시
+// (iOS는 beforeinstallprompt 미지원이라 별도 처리)
+const isIOSDevice = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isInStandaloneMode = window.navigator.standalone;
+if (isIOSDevice && !isInStandaloneMode) {
+  // 이미 홈 화면에서 실행 중이 아닐 때만 표시
+  setTimeout(() => {
+    const iosBanner = document.getElementById('ios-banner');
+    if (iosBanner) iosBanner.style.display = 'block';
+  }, 2000);
+}
+
+// Android Chrome: 홈 화면 추가 배너 표시
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // 설치 안내 버튼 표시
+  const installBanner = document.getElementById('install-banner');
+  if (installBanner) installBanner.style.display = 'flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(() => {
+    deferredPrompt = null;
+    const installBanner = document.getElementById('install-banner');
+    if (installBanner) installBanner.style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  const installBanner = document.getElementById('install-banner');
+  if (installBanner) installBanner.style.display = 'none';
 });
 </script>
 </body>
