@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -610,15 +611,27 @@ function explain(btn, text) {
  * onvoiceschanged를 addEventListener로 등록해 중복 등록 문제 해결
  */
 function withVoices(callback) {
+    // 1차 시도: 이미 로드되어 있으면 바로 실행
     const voices = speechSynthesis.getVoices();
     if (voices.length > 0) {
         callback(voices);
-    } else {
-        speechSynthesis.addEventListener('voiceschanged', function handler() {
-            speechSynthesis.removeEventListener('voiceschanged', handler);
-            callback(speechSynthesis.getVoices());
-        });
+        return;
     }
+    // 2차 시도: voiceschanged 이벤트 대기
+    let fired = false;
+    speechSynthesis.addEventListener('voiceschanged', function handler() {
+        speechSynthesis.removeEventListener('voiceschanged', handler);
+        if (fired) return;
+        fired = true;
+        callback(speechSynthesis.getVoices());
+    });
+    // 3차 시도: 안드로이드 Chrome에서 voiceschanged가 발화 안 되는 경우 대비
+    // 500ms 후에도 콜백이 실행 안 됐으면 빈 voices로라도 강제 실행
+    setTimeout(() => {
+        if (fired) return;
+        fired = true;
+        callback(speechSynthesis.getVoices());
+    }, 500);
 }
 
 function speak(text) {
@@ -723,13 +736,12 @@ function record(btn, answer) {
     const resultBox = card.querySelector('.result-box');
     resultBox.classList.add('hidden');
 
-    // ★ getUserMedia を完全削除
-    // SpeechRecognition が自分でマイクを管理するため、
-    // getUserMedia と同時使用すると Android でマイクが競合して失敗する
     isRecording = true;
     btn.classList.add('recording');
     btn.innerHTML = '⏹ 録音中...';
 
+    // Android Chrome에서 TTS cancel 후 마이크 충돌 방지 딜레이
+    setTimeout(() => {
     const recognition = new SR();
     recognition.lang = 'ko-KR';
     recognition.continuous = false;
@@ -771,6 +783,7 @@ function record(btn, answer) {
     setTimeout(() => {
         try { recognition.stop(); } catch (_) {}
     }, 6000);
+    }, 150); // Android Chrome TTS cancel 딜레이 끝
 }
 
 // ══════════════════════════════════════════
