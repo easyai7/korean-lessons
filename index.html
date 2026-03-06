@@ -639,14 +639,23 @@ function withVoices(callback) {
         fired = true;
         callback(speechSynthesis.getVoices());
     });
-    // 3차 시도: 안드로이드 Chrome에서 voiceschanged가 발화 안 되는 경우 대비
-    // 500ms 후에도 콜백이 실행 안 됐으면 빈 voices로라도 강제 실행
+    // 3차 시도: iOS Safari / Android Chrome 모두 대비
+    // 500ms 후에도 콜백 미실행이면 강제 실행 (voices 없어도 진행)
     setTimeout(() => {
         if (fired) return;
         fired = true;
         callback(speechSynthesis.getVoices());
     }, 500);
 }
+
+// iOS Safari: 첫 사용자 인터랙션 시점에 AudioContext 활성화
+// speechSynthesis가 suspended 상태로 시작하는 문제 방지
+document.addEventListener('touchstart', function iosAudioUnlock() {
+    const u = new SpeechSynthesisUtterance('');
+    speechSynthesis.speak(u);
+    speechSynthesis.cancel();
+    document.removeEventListener('touchstart', iosAudioUnlock);
+}, { once: true });
 
 function speak(text) {
     // 녹음 중이면 TTS를 먼저 중지
@@ -733,10 +742,12 @@ function speakLines(lines, onDone) {
 // ══════════════════════════════════════════
 
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 function record(btn, answer) {
     if (!SR) {
-        alert('音声認識に対応していません。\nAndroid→Chrome、iOS→Safariをお使いください。');
+        alert('音声認識に対応していません。\niPhoneはSafari、AndroidはChromeをお使いください。');
         return;
     }
     if (isRecording) {
@@ -758,8 +769,11 @@ function record(btn, answer) {
     setTimeout(() => {
     const recognition = new SR();
     recognition.lang = 'ko-KR';
-    recognition.continuous = false;
+    // iOS Safari는 continuous:true가 더 안정적
+    recognition.continuous = isIOS ? true : false;
     recognition.interimResults = false;
+    // iOS Safari는 maxAlternatives 명시 필요
+    recognition.maxAlternatives = 1;
 
     let recognized = false;
 
@@ -767,14 +781,18 @@ function record(btn, answer) {
         if (recognized) return;
         recognized = true;
         const heard = e.results[0][0].transcript;
+        // iOS Safari는 continuous:true라서 수동 stop 필요
+        try { recognition.stop(); } catch(_) {}
         showScore(card, answer, heard);
     };
 
     recognition.onerror = (e) => {
         if (recognized) return;
+        // iOS Safari에서 no-speech는 무시 (타임아웃이 처리)
+        if (e.error === 'no-speech' && isIOS) return;
         recognized = true;
         let msg = '❌ 認識失敗。もう一度試してください。';
-        if (e.error === 'not-allowed') msg = '❌ マイクの許可が必要です。ブラウザ設定を確認してください。';
+        if (e.error === 'not-allowed') msg = '❌ マイクの許可が必要です。\nSafari設定→このサイトを許可してください。';
         if (e.error === 'network')     msg = '❌ ネットワークエラー。接続を確認してください。';
         resultBox.innerHTML = `<div class="result-msg">${msg}</div>`;
         resultBox.classList.remove('hidden');
